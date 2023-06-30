@@ -6,14 +6,24 @@ public class NotesGenerator : MonoBehaviour
 {
     public GameObject[] generatorsObjs;
     public GameObject noteObj;
+    public List<GameObject> notesList = new List<GameObject>();
 
     private bool playingSong = false;
     private int[] timings = new int[10];
 
     private int currentNoteID = 0;
 
+
     private float lastUpdate;
+    public float lastSpeedUpdate = 0;
+    public float timeNow = 0;
+    public float notesSpeed = 12000;
+    public float maxSpawnWait = 1f;
+    public float minSpawnWait = 0.2f;
+    public float nbTimesMoreDifficult = 0;
+
     private int genNum;
+    private float randomWait;
 
     // Start is called before the first frame update
     void Start()
@@ -28,11 +38,16 @@ public class NotesGenerator : MonoBehaviour
     {
         if (playingSong)
         {
+            timeNow = Time.time;
             if (Time.time - lastUpdate > 1)
             {
                 lastUpdate = Time.time;
                 StartCoroutine(CoroutineSpawn());
             }
+            //if (Time.time - lastSpeedUpdate > 10)
+            //{
+            //    lastSpeedUpdate = Time.time;
+            //}
             //StartCoroutine(CoroutineSpawn());
         }
     }
@@ -48,16 +63,22 @@ public class NotesGenerator : MonoBehaviour
         //}
     }
 
-    void SpawnNote(GameObject generatorObj)
+    void SpawnNote(GameObject generatorObj, int genNum)
     {
-        Instantiate(noteObj, generatorObj.transform);
+        //var tempNote = noteObj;
+        //var tempNoteColor = tempNote.transform.GetChild(1);
+        //tempNoteColor.GetComponent<Renderer>().material.color = generatorObj.GetComponent<Renderer>().material.color;
+        /*var material = tempNote.GetComponent<Renderer>().material;
+        material = generatorObj.GetComponent<Renderer>().material;*/
+        Instantiate(notesList[genNum], generatorObj.transform);
     }
 
     IEnumerator CoroutineSpawn()
     {
-        yield return new WaitForSeconds(0.8f);
+        randomWait = Random.Range(0.1f, 0.15f);
+        yield return new WaitForSeconds(randomWait);
         genNum = Random.Range(0, 4);
-        SpawnNote(generatorsObjs[genNum]);
+        SpawnNote(generatorsObjs[genNum], genNum);
 
     }
 
